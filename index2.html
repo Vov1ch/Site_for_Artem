@@ -1,476 +1,64 @@
-<!DOCTYPE html>
+﻿<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Биохимия пульпы: Интерактив</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(145deg, #2c3e2f 0%, #1a2a1c 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
-        .game-container {
-            max-width: 800px;
-            width: 100%;
-            background: #fef7e0;
-            border-radius: 48px;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.5);
-            padding: 20px;
-            border: 1px solid #d4b87a;
-        }
-        .status-bar {
-            background: #2c2b28;
-            border-radius: 20px;
-            padding: 15px;
-            color: white;
-            margin-bottom: 20px;
-        }
-        .progress-section {
-            margin-bottom: 12px;
-        }
-        .label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-            margin-bottom: 5px;
-            gap: 10px;
-        }
-        .bar {
-            height: 20px;
-            background-color: #555;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        .fill {
-            height: 100%;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-        .fill.bacteria { background-color: #9b2f2f; }
-        .fill.pressure { background-color: #e67e22; }
-        .fill.dentin { background-color: #e8c97a; box-shadow: inset 0 0 5px #aa8e40; }
-        .resources {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-            font-weight: bold;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .tooth-area {
-            background: #e9dbaf;
-            border-radius: 80px 80px 40px 40px;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 20px;
-            position: relative;
-            border: 3px solid #b97f44;
-        }
-        .pulp-core {
-            background: #ffccaa;
-            border-radius: 60px;
-            padding: 15px;
-            margin: 10px;
-            border: 1px dashed #b3470c;
-            font-weight: bold;
-        }
-        .actions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        button {
-            padding: 12px;
-            border: none;
-            border-radius: 24px;
-            font-weight: bold;
-            font-size: 16px;
-            cursor: pointer;
-            transition: transform 0.1s, filter 0.1s;
-            background: #f0f0f0;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        button:active {
-            transform: scale(0.97);
-        }
-        button small {
-            display: block;
-            margin-top: 6px;
-            font-size: 12px;
-            font-weight: normal;
-            line-height: 1.3;
-        }
-        .btn-defense { background: #b8860b; color: white; border-bottom: 4px solid #6b4c1c; }
-        .btn-immune { background: #c0392b; color: white; border-bottom: 4px solid #8b2c1a; }
-        .btn-antioxid { background: #27ae60; color: white; border-bottom: 4px solid #1e8449; }
-        .btn-restore { background: #2980b9; color: white; border-bottom: 4px solid #1f618d; }
-        .reset-btn {
-            background: #2c3e50;
-            color: white;
-            width: 100%;
-            margin-top: 15px;
-        }
-        .message-area {
-            margin-top: 20px;
-            background: #fff0cc;
-            border-left: 6px solid #d97706;
-            padding: 10px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: bold;
-            line-height: 1.5;
-            color: #4a2e1a;
-        }
-        h2, h3 {
-            margin: 0 0 10px 0;
-            color: #4a2e1a;
-        }
-        .flex-row {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        @media (max-width: 700px) {
-            .actions {
-                grid-template-columns: 1fr;
-            }
-            .label {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Пульпа: интерактив по биохимии</title>
+<style>
+:root{--bg:#f6e9d0;--card:#fff8ef;--ink:#2f231d;--muted:#6c5b50;--red:#8f2f2d;--gold:#b8873d;--green:#2e6a58;--blue:#365f8b;--line:rgba(75,53,40,.12)}*{box-sizing:border-box}body{margin:0;font-family:Bahnschrift,"Segoe UI",sans-serif;background:linear-gradient(140deg,#efdebd,#f8f1e4);color:var(--ink);padding:18px}h1,h2,h3{margin:0 0 10px;font-family:Georgia,"Times New Roman",serif}p,li{line-height:1.55}.app{max-width:1360px;margin:0 auto;display:grid;gap:18px}.hero,.grid>section,.card{background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:0 14px 36px rgba(63,42,28,.09)}.hero{padding:22px;display:grid;grid-template-columns:1.2fr .8fr;gap:16px}.pill{display:inline-block;padding:7px 12px;border-radius:999px;background:#f3dfbf;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}.lead{color:var(--muted)}.tags{display:flex;flex-wrap:wrap;gap:8px}.tags span{padding:8px 12px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:13px}.stats{display:grid;gap:10px}.stat{padding:12px 14px;border-radius:18px;background:#fff;border:1px solid var(--line)}.row{display:flex;justify-content:space-between;gap:12px;font-size:14px;font-weight:700;margin-bottom:8px}.bar{height:10px;border-radius:999px;background:#eadfce;overflow:hidden}.fill{height:100%;width:0;transition:.3s}.bad{background:linear-gradient(90deg,#df7053,#8f2f2d)}.warn{background:linear-gradient(90deg,#f2b452,#cd7c16)}.good{background:linear-gradient(90deg,#58a086,#2e6a58)}.calm{background:linear-gradient(90deg,#6f91bf,#365f8b)}.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}.grid>section{padding:20px}.track{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}.step{padding:10px 12px;border-radius:16px;background:#fff;border:1px solid var(--line);font-size:13px;font-weight:700;color:#745f55}.step.active{background:#f6dfd3;color:#682523}.cols,.cells,.facts{display:grid;gap:12px}.cols{grid-template-columns:1fr 1fr;margin:16px 0}.card{padding:16px}.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}.action{padding:14px;border-radius:18px;border:1px solid var(--line);background:#fff;cursor:pointer;text-align:left}.action strong,.action span,.action small{display:block}.action span{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#765f53;margin-bottom:6px}.action strong{margin-bottom:8px;line-height:1.4}.action small{color:#5c4d44;font-size:13px;line-height:1.45}.goodA{background:#e6f2ec}.midA{background:#e7eef8}.riskA{background:#f8e2da}.layers{display:grid;gap:9px}.layer{padding:11px 13px;border-radius:16px;background:#fff;border:1px solid var(--line)}.layer.active{background:#f6e6c3;border-color:#d2a760}.cells,.facts{grid-template-columns:1fr 1fr}.mini{padding:12px;border-radius:16px;background:#fff;border:1px solid var(--line)}.history{display:grid;gap:10px}.muted{color:var(--muted)}.buttons{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}button.ctrl{border:0;border-radius:999px;padding:11px 16px;font:inherit;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--red),var(--gold));cursor:pointer}button.ctrl.alt{background:linear-gradient(135deg,var(--blue),#5b86b4)}a{color:#7b2d2a}@media(max-width:1100px){.hero,.grid,.cols,.cells,.facts,.actions{grid-template-columns:1fr}.track{grid-template-columns:1fr 1fr}}@media(max-width:700px){body{padding:12px}.hero,.grid>section,.card{border-radius:18px}}
+</style>
 </head>
 <body>
-<div class="game-container" id="gameRoot">
-    <h2>🦷 Пульпарная оборона: Биохимия воспаления</h2>
-
-    <div class="status-bar">
-        <div class="progress-section">
-            <div class="label">
-                <span>🦠 Бактериальная инвазия (глубина кариеса)</span>
-                <span id="bacteriaPercent">0%</span>
-            </div>
-            <div class="bar">
-                <div class="fill bacteria" id="bacteriaBar"></div>
-            </div>
-        </div>
-
-        <div class="progress-section">
-            <div class="label">
-                <span>💢 Внутрипульпарное давление (IL-1, TNF-α)</span>
-                <span id="pressurePercent">0%</span>
-            </div>
-            <div class="bar">
-                <div class="fill pressure" id="pressureBar"></div>
-            </div>
-        </div>
-
-        <div class="progress-section">
-            <div class="label">
-                <span>🛡️ Репаративный дентин (барьер)</span>
-                <span id="dentinPercent">0%</span>
-            </div>
-            <div class="bar">
-                <div class="fill dentin" id="dentinBar"></div>
-            </div>
-        </div>
-
-        <div class="resources">
-            <span>⚡ АТФ: <span id="atfCount">100</span> ед.</span>
-            <span>🧪 Ca²⁺: <span id="calciumCount">80</span> ед.</span>
-            <span>🧬 Окислительный стресс: <span id="stressCount">10</span> ед.</span>
-        </div>
-    </div>
-
-    <div class="tooth-area">
-        <div style="font-size: 24px;">🦷 Эмаль / Дентин</div>
-        <div class="pulp-core">
-            🔴 ПУЛЬПА (Одонтобласты, нервы, сосуды)
-            <div style="font-size:12px; margin-top:5px;">⚠️ Баланс: воспаление vs регенерация</div>
-        </div>
-    </div>
-
-    <div class="actions">
-        <button class="btn-defense" id="actionDentin">
-            🛡️ Секреция третичного дентина
-            <small>(+15% барьер, -5% бактерии, +3% давление, -15 АТФ, -20 Ca²⁺)</small>
-        </button>
-
-        <button class="btn-immune" id="actionImmune">
-            🔥 Провоспалительный ответ
-            <small>(-20% бактерий, +12% давление, -10 АТФ, +10 стресс)</small>
-        </button>
-
-        <button class="btn-antioxid" id="actionAntioxid">
-            🌿 Антиоксидантная защита
-            <small>(-15 стресс, +5 АТФ, -5% давление)</small>
-        </button>
-
-        <button class="btn-restore" id="actionRestore">
-            💊 Анальгезия + вазодилатация
-            <small>(-10% давление, -5 АТФ, +2% бактерии)</small>
-        </button>
-    </div>
-
-    <button class="reset-btn" id="resetGame">🔄 Рестарт (новый кариозный процесс)</button>
-
-    <div class="message-area" id="messageBox">
-        💡 Интерактив: иммунитет пульпы. Стройте дентин, контролируйте давление, избегайте некроза!
-    </div>
+<div class="app">
+<header class="hero">
+<div>
+<div class="pill">Учебный интерактив</div>
+<h1>Пульпа зуба: строение, воспаление, препараты и лечение</h1>
+<p class="lead">Сценарий показывает, как меняются слои пульпы, клеточный состав, матрикс и биохимия воспаления при кариесе, вскрытии пульпы и выборе разных методов лечения. Логика опирается на рекомендации AAE/AAPD и обзорные данные по строению пульпы.</p>
+<div class="tags"><span>Одонтобласты</span><span>Зона Вейля</span><span>Клеточно-богатая зона</span><span>Сосуды и C-волокна</span><span>MTA/Biodentine</span><span>NSAID</span></div>
 </div>
-
+<div class="stats">
+<div class="stat"><div class="row"><span>Микробная нагрузка</span><span id="mV"></span></div><div class="bar"><div id="mB" class="fill bad"></div></div></div>
+<div class="stat"><div class="row"><span>Отёк и давление</span><span id="iV"></span></div><div class="bar"><div id="iB" class="fill warn"></div></div></div>
+<div class="stat"><div class="row"><span>Перфузия</span><span id="pV"></span></div><div class="bar"><div id="pB" class="fill good"></div></div></div>
+<div class="stat"><div class="row"><span>Репаративный резерв</span><span id="rV"></span></div><div class="bar"><div id="rB" class="fill calm"></div></div></div>
+<div class="stat"><div class="row"><span>Боль</span><span id="painV"></span></div><div class="bar"><div id="painB" class="fill bad"></div></div></div>
+<div class="stat"><div class="row"><span>Прогноз витальности</span><span id="score"></span></div><div class="muted" id="scoreText"></div></div>
+</div>
+</header>
+<div class="grid">
+<section>
+<div class="track" id="track"></div>
+<div class="pill" id="num">Этап 1</div>
+<h2 id="title"></h2>
+<p id="desc" class="lead"></p>
+<div class="cols">
+<div class="card"><h3>Что происходит</h3><ul id="bio"></ul></div>
+<div class="card"><h3>Клиника и морфология</h3><ul id="clin"></ul></div>
+</div>
+<h3>Варианты события / вмешательства</h3>
+<div class="actions" id="actions"></div>
+<div class="card"><h3 id="outT">Разбор решения</h3><p id="outD" class="muted">Выберите вариант, чтобы увидеть, как тактика влияет на жизнеспособность пульпы.</p><p id="outI"></p></div>
+<div class="card"><h3>История</h3><div class="history" id="hist"></div></div>
+<div class="buttons"><button class="ctrl" id="reset">Начать заново</button><button class="ctrl alt" id="next">Следующий этап</button></div>
+</section>
+<section>
+<div class="card"><h3>Слои пульпы</h3><div class="layers"><div class="layer" id="L1"><b>Одонтобластический слой</b><div class="muted">Синтез предентина, ранний иммунный ответ, сигналы для третичного дентина.</div></div><div class="layer" id="L2"><b>Зона Вейля</b><div class="muted">Капилляры и сплетение Рашкова, быстрые A-delta ответы.</div></div><div class="layer" id="L3"><b>Клеточно-богатая зона</b><div class="muted">Фибробласты, иммунные клетки, прогениторы и DPSCs.</div></div><div class="layer" id="L4"><b>Центральное ядро</b><div class="muted">Сосудистые стволы, венулы, C-волокна, рыхлый матрикс.</div></div></div><p id="layerText" class="lead"></p></div>
+<div class="card"><h3>Клетки и ткань</h3><div class="cells"><div class="mini"><b>Одонтобласты</b><p id="c1" class="muted"></p></div><div class="mini"><b>Фибробласты</b><p id="c2" class="muted"></p></div><div class="mini"><b>Иммунные клетки</b><p id="c3" class="muted"></p></div><div class="mini"><b>Стволовые клетки</b><p id="c4" class="muted"></p></div></div></div>
+<div class="card"><h3>Состав, медиаторы, препараты</h3><div class="facts"><div class="mini"><b>Состав пульпы</b><ul id="mat"></ul></div><div class="mini"><b>Медиаторы</b><ul id="med"></ul></div><div class="mini"><b>Методы и препараты</b><ul id="ther"></ul></div><div class="mini"><b>Основа сценария</b><ul><li><a target="_blank" rel="noopener noreferrer" href="https://www.aae.org/wp-content/uploads/2021/05/VitalPulpTherapy_PositionStatement_v2.pdf">AAE Vital Pulp Therapy</a></li><li><a target="_blank" rel="noopener noreferrer" href="https://www.aapd.org/globalassets/media/policies_guidelines/bp_pulptherapy.pdf">AAPD Pulp Therapy</a></li><li><a target="_blank" rel="noopener noreferrer" href="https://www.aae.org/specialty/wp-content/uploads/sites/2/2017/06/aae_systemic-antibiotics.pdf">AAE Systemic Antibiotics</a></li><li><a target="_blank" rel="noopener noreferrer" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10839349/">Обзор по структуре пульпы</a></li></ul></div></div></div>
+</section>
+</div>
+</div>
 <script>
-    let gameState = {
-        bacteria: 20,
-        pressure: 15,
-        dentinBarrier: 10,
-        atp: 100,
-        calcium: 80,
-        oxidativeStress: 10,
-        gameOver: false
-    };
-
-    const DOM = {
-        bacteriaPercent: document.getElementById('bacteriaPercent'),
-        bacteriaBar: document.getElementById('bacteriaBar'),
-        pressurePercent: document.getElementById('pressurePercent'),
-        pressureBar: document.getElementById('pressureBar'),
-        dentinPercent: document.getElementById('dentinPercent'),
-        dentinBar: document.getElementById('dentinBar'),
-        atfCount: document.getElementById('atfCount'),
-        calciumCount: document.getElementById('calciumCount'),
-        stressCount: document.getElementById('stressCount'),
-        messageBox: document.getElementById('messageBox')
-    };
-
-    function clamp(value, min, max) {
-        return Math.max(min, Math.min(max, value));
-    }
-
-    function updateUI() {
-        DOM.bacteriaPercent.innerText = clamp(gameState.bacteria, 0, 100) + '%';
-        DOM.bacteriaBar.style.width = clamp(gameState.bacteria, 0, 100) + '%';
-
-        DOM.pressurePercent.innerText = clamp(gameState.pressure, 0, 100) + '%';
-        DOM.pressureBar.style.width = clamp(gameState.pressure, 0, 100) + '%';
-
-        DOM.dentinPercent.innerText = clamp(gameState.dentinBarrier, 0, 100) + '%';
-        DOM.dentinBar.style.width = clamp(gameState.dentinBarrier, 0, 100) + '%';
-
-        DOM.atfCount.innerText = Math.floor(gameState.atp);
-        DOM.calciumCount.innerText = Math.floor(gameState.calcium);
-        DOM.stressCount.innerText = Math.floor(gameState.oxidativeStress);
-    }
-
-    function checkWinLose() {
-        if (gameState.gameOver) return true;
-
-        if (gameState.bacteria <= 5 && gameState.dentinBarrier >= 60) {
-            gameState.gameOver = true;
-            DOM.messageBox.innerHTML =
-                "🏆 <b>ПОБЕДА!</b><br>Вы успешно изолировали кариес третичным дентином. " +
-                "Пульпа сохранена. Биохимический успех: баланс цитокинов и минерализация матрикса!";
-            return true;
-        }
-
-        if (gameState.bacteria >= 100) {
-            gameState.gameOver = true;
-            DOM.messageBox.innerHTML =
-                "💀 <b>ПОРАЖЕНИЕ</b><br>Бактерии достигли критического уровня. " +
-                "Развился необратимый пульпит и некроз пульпы. Требуется эндодонтическое лечение.";
-            return true;
-        }
-
-        if (gameState.pressure >= 100) {
-            gameState.gameOver = true;
-            DOM.messageBox.innerHTML =
-                "⚠️ <b>НЕОБРАТИМЫЙ ПУЛЬПИТ</b><br>Внутрипульпарное давление стало критическим. " +
-                "Сдавление сосудов, ишемия, гибель одонтобластов. Зуб нежизнеспособен.";
-            return true;
-        }
-
-        if (gameState.oxidativeStress >= 80) {
-            gameState.gameOver = true;
-            DOM.messageBox.innerHTML =
-                "🧨 <b>ОКИСЛИТЕЛЬНЫЙ СТРЕСС</b><br>MMP разрушили внеклеточный матрикс. " +
-                "Пульпа лишена структурной поддержки. Некроз.";
-            return true;
-        }
-
-        if (gameState.atp <= 0) {
-            gameState.gameOver = true;
-            DOM.messageBox.innerHTML =
-                "🔋 <b>ЭНЕРГЕТИЧЕСКИЙ КОЛЛАПС</b><br>Истощены запасы АТФ. " +
-                "Невозможна работа ионных насосов и секреция коллагена. Гибель клеток пульпы.";
-            return true;
-        }
-
-        return false;
-    }
-
-    function addMessage(text, isError = false) {
-        if (!gameState.gameOver) {
-            DOM.messageBox.innerHTML = isError ? `⚠️ ${text}` : `✅ ${text}`;
-            setTimeout(() => {
-                if (!gameState.gameOver) {
-                    DOM.messageBox.innerHTML =
-                        "💡 Выберите действие: дентин, иммунитет или снижение стресса/давления.";
-                }
-            }, 2200);
-        }
-    }
-
-    function applyAction(effects) {
-        if (gameState.gameOver) {
-            addMessage("Игра окончена. Нажмите «Рестарт».", true);
-            return;
-        }
-
-        if (effects.dentin !== undefined) {
-            gameState.dentinBarrier += effects.dentin;
-        }
-        if (effects.bacteria !== undefined) {
-            gameState.bacteria += effects.bacteria;
-        }
-        if (effects.pressure !== undefined) {
-            gameState.pressure += effects.pressure;
-        }
-        if (effects.atp !== undefined) {
-            gameState.atp -= effects.atp;
-        }
-        if (effects.calcium !== undefined) {
-            gameState.calcium -= effects.calcium;
-        }
-        if (effects.stress !== undefined) {
-            gameState.oxidativeStress += effects.stress;
-        }
-        if (effects.reduceStress !== undefined) {
-            gameState.oxidativeStress -= effects.reduceStress;
-        }
-
-        if (gameState.oxidativeStress > 40 && !effects.skippedPassive) {
-            let extraPressure = Math.floor((gameState.oxidativeStress - 40) / 20);
-            if (extraPressure > 0) {
-                gameState.pressure += extraPressure;
-            }
-        }
-
-        if (gameState.dentinBarrier < 40) {
-            let passiveBacteria = Math.floor((40 - gameState.dentinBarrier) / 15) + 1;
-            gameState.bacteria += passiveBacteria;
-        }
-
-        if (effects.pressure === undefined || effects.pressure >= 0) {
-            if (Math.random() > 0.6 && gameState.pressure > 5) {
-                gameState.pressure -= 2;
-            }
-        }
-
-        gameState.bacteria = clamp(gameState.bacteria, 0, 100);
-        gameState.pressure = clamp(gameState.pressure, 0, 100);
-        gameState.dentinBarrier = clamp(gameState.dentinBarrier, 0, 100);
-        gameState.atp = clamp(gameState.atp, 0, 100);
-        gameState.calcium = clamp(gameState.calcium, 0, 100);
-        gameState.oxidativeStress = clamp(gameState.oxidativeStress, 0, 100);
-
-        updateUI();
-        checkWinLose();
-    }
-
-    document.getElementById('actionDentin').onclick = () => {
-        if (gameState.atp < 15 || gameState.calcium < 20) {
-            addMessage("Недостаточно АТФ или кальция для синтеза коллагена и минерализации.", true);
-            return;
-        }
-
-        applyAction({
-            dentin: 15,
-            bacteria: -5,
-            pressure: 3,
-            atp: 15,
-            calcium: 20,
-            stress: 5
-        });
-
-        if (!gameState.gameOver) {
-            addMessage("Одонтобласты секретируют дентинный матрикс. Барьер укреплён.");
-        }
-    };
-
-    document.getElementById('actionImmune').onclick = () => {
-        if (gameState.atp < 10) {
-            addMessage("Не хватает АТФ для выраженного иммунного ответа.", true);
-            return;
-        }
-
-        applyAction({
-            bacteria: -20,
-            pressure: 12,
-            atp: 10,
-            stress: 10
-        });
-
-        if (!gameState.gameOver) {
-            addMessage("Выброс IL-1β и TNF-α снижает число бактерий, но усиливает отёк.");
-        }
-    };
-
-    document.getElementById('actionAntioxid').onclick = () => {
-        applyAction({
-            reduceStress: 15,
-            atp: -5,
-            pressure: -5,
-            bacteria: 0
-        });
-
-        if (!gameState.gameOver) {
-            addMessage("Антиоксидантная защита уменьшает ROS, снижая стресс и давление.");
-        }
-    };
-
-    document.getElementById('actionRestore').onclick = () => {
-        if (gameState.atp < 5) {
-            addMessage("Недостаточно энергии для регуляции сосудистого тонуса.", true);
-            return;
-        }
-
-        applyAction({
-            pressure: -10,
-            atp: 5,
-            bacteria: 2
-        });
-
-        if (!gameState.gameOver) {
-            addMessage("Вазодилатация и анальгезия снижают давление, но бактерии слегка прогрессируют.");
-        }
-    };
-
-    document.getElementById('resetGame').onclick = () => {
-        gameState = {
-            bacteria: 20,
-            pressure: 15,
-            dentinBarrier: 10,
-            atp: 100,
-            calcium: 80,
-            oxidativeStress: 10,
-            gameOver: false
-        };
-
-        updateUI();
-        DOM.messageBox.innerHTML =
-            "🔄 Игра перезапущена. Защитите пульпу от кариеса, балансируя между воспалением и репарацией!";
-    };
-
-    updateUI();
+const init={m:28,i:18,p:82,r:72,pain:22};
+const stages=[
+{short:"Глубокий кариес",focus:1,title:"Глубокий кариес у пульпарно-дентинного комплекса",desc:"Токсины биоплёнки идут по канальцам. Одонтобласты первыми распознают раздражитель, активируют врождённую защиту, меняют секрецию матрикса и запускают третичный дентин.",bio:["Одонтобласты работают как сенсоры и секреторные клетки.","Высвобождение факторов роста из деминерализованного дентина может стимулировать репарацию.","У пульпы нет коллатерального кровотока, поэтому даже умеренный отёк быстро повышает давление."],clin:["Краткая боль от холода чаще связана с гидродинамикой и A-delta волокнами.","Ключевой фактор прогноза на этом этапе: герметичность и контроль микробной диффузии.","Пульпу ещё реально сохранить без эндодонтии."],layer:"Фокус на одонтобластическом слое: именно здесь начинается связь между раздражением, иммунным ответом и репаративным дентином.",cells:["Секретируют предентин и участвуют в раннем иммунном ответе.","Поддерживают коллагеновый матрикс и его перестройку.","Дендритные клетки и макрофаги усиливают антигенную презентацию.","Пул прогениторов нужен для появления одонтобластоподобных клеток."],mat:["Рыхлая высокогидратированная соединительная ткань.","Коллагены I/III, протеогликаны, фибронектин, вода, ионы кальция и фосфата."],med:["TLR-сигналинг, CXCL8, IL-6.","Локальные медиаторы боли и сосудистой реакции.","Факторы роста из дентина."],ther:["Селективное удаление кариеса уменьшает травму.","Кальций-силикатные материалы поддерживают минерализацию.","Главное здесь не обезболивание само по себе, а герметичная реставрация."],opts:[{t:"goodA",k:"Приоритет",l:"Селективное удаление кариеса + герметичная реставрация + кальций-силикатный лайнер",n:"Сохраняет барьер и снижает микробную проницаемость.",e:{m:-14,i:-5,p:4,r:12,pain:-8},oT:"Пульпа разгружена",oD:"Раздражитель уменьшен без лишнего вскрытия. Это усиливает шанс на реакционный и репаративный дентин.",oI:"Меньше токсинов, меньше простагландиновой боли, выше шанс сохранить витальность."},{t:"riskA",k:"Риск",l:"Агрессивное полное удаление дентина до вскрытия без надёжной изоляции",n:"Создаёт механическую травму и риск дополнительной контаминации.",e:{m:12,i:16,p:-10,r:-16,pain:14},oT:"Инфекция плюс травма",oD:"Избыточное препарирование способно перевести обратимый процесс в экспозицию пульпы и кровотечение.",oI:"Растут отёк, давление и вероятность срыва витальной терапии."},{t:"midA",k:"Промежуточно",l:"Только анальгетик без санации",n:"Симптом глушится, причина остаётся.",e:{m:8,i:5,p:-2,r:-6,pain:-5},oT:"Симптомы замаскированы",oD:"Обезболивание не решает вопрос биоплёнки и микроподтекания.",oI:"Кратковременное облегчение не равно лечению."}]},
+{short:"Обратимый пульпит",focus:2,title:"Ранняя воспалительная реакция внутри пульпы",desc:"В зоне Вейля лежат капилляры и нервное сплетение Рашкова. Здесь особенно видно, как сосудистая реакция и гидродинамика канальцев превращают раздражение в боль.",bio:["PGE2 и брадикинин снижают болевой порог.","Полезная сосудистая реакция в жёсткой камере быстро становится вредной из-за давления.","При устранении раздражителя ткань ещё способна вернуться к норме."],clin:["Короткая боль на холод больше соответствует обратимому процессу.","Ночные и длительные боли ухудшают прогноз.","Нужно убрать причину и не уронить перфузию."],layer:"Фокус на зоне Вейля: здесь сходятся сосуды, гидродинамика и A-delta боль.",cells:["Одонтобластические отростки продолжают передавать раздражение.","Фибробласты перестраивают матрикс после воспаления.","Нейтрофилы, макрофаги и дендритные клетки усиливают ответ.","Прогениторы понадобятся, если удастся переключить ткань в репарацию."],mat:["Высокая гидратация делает ткань чувствительной к отёку.","Матрикс влияет на диффузию медиаторов и миграцию клеток."],med:["PGE2 объясняет пользу NSAID по боли.","IL-1, TNF-alpha, IL-6 поддерживают воспаление.","Нейропептиды усиливают вазодилатацию."],ther:["NSAID полезны только как сопровождение санации.","Антибиотики не заменяют локальное лечение при локальном пульпите.","Избыточная вазоконстрикция опасна ишемией."],opts:[{t:"goodA",k:"Приоритет",l:"Убрать раздражитель, выполнить герметичную реставрацию и кратко добавить NSAID",n:"Причина устраняется, а простагландиновый компонент боли снижается.",e:{m:-8,i:-10,p:3,r:8,pain:-12},oT:"Воспаление купируется по правильной цепочке",oD:"Локальная санация и герметизация возвращают пульпу в среду, где НПВП действительно помогают.",oI:"Меньше боли, меньше отёка, выше шанс сохранить микроциркуляцию."},{t:"midA",k:"Промежуточно",l:"Системный антибиотик без местного устранения причины",n:"Антибиотик не ликвидирует микроподтекание и канальцевую диффузию токсинов.",e:{m:4,i:2,p:-3,r:-5,pain:-2},oT:"Биология проблемы не решена",oD:"При локализованном пульпите антибиотик не заменяет механическое и реставрационное лечение.",oI:"Возможна ложная отсрочка, а воспаление продолжит расти."},{t:"riskA",k:"Риск",l:"Сосудосуживающая тактика и ожидание без устранения очага",n:"Симптомы могут уменьшиться, но перфузия ухудшится.",e:{m:6,i:7,p:-11,r:-10,pain:-4},oT:"Симптомы снижены ценой кровоснабжения",oD:"Пульпа страдает не только от воспаления, но и от ишемии. Без санации это быстро истощает резерв ткани.",oI:"Повышается риск перехода к необратимому процессу."}]},
+{short:"Экспозиция",focus:3,title:"Точечное вскрытие пульпы и выбор материала",desc:"Небольшая экспозиция не означает автоматическую потерю пульпы. Если кровотечение контролируется, поле изолировано и реставрация герметична, витальная терапия остаётся реалистичной.",bio:["Успех зависит от гемостаза, чистого поля и герметизации.","Кальций-силикатные цементы биосовместимы и стимулируют минерализованный барьер.","Микроподтекание после покрытия пульпы перечёркивает пользу материала."],clin:["Быстрый гемостаз и жизнеспособная ткань улучшают прогноз.","Гной, длительное кровотечение и спонтанная боль ухудшают его.","Немедленное долговременное закрытие важно для успеха."],layer:"Фокус на клеточно-богатой зоне: здесь сосредоточен репаративный клеточный резерв пульпы.",cells:["Часть одонтобластов может погибнуть в зоне контакта.","Фибробласты поддерживают новый матрикс при заживлении.","Макрофаги и нейтрофилы полезны только при контролируемой инфекции.","DPSCs особенно важны для репаративного дентина."],mat:["Репаративный матрикс требует живых клеток и стабильной среды.","Коллагеновый каркас направляет организацию новой ткани."],med:["Факторы роста могут поддержать регенерацию.","IL-1 и TNF-alpha в избытке ведут к деструкции.","Щелочная среда кальций-силикатных материалов помогает минерализации."],ther:["AAE/AAPD поддерживают кальций-силикатные материалы для подходящих случаев.","Гемостаз обязателен.","Ca(OH)2 исторически применялся, но биокерамика обычно предсказуемее по герметичности."],opts:[{t:"goodA",k:"Приоритет",l:"Гемостаз, прямое покрытие MTA/Biodentine и немедленная герметичная реставрация",n:"Современная витальная тактика для контролируемой экспозиции.",e:{m:-10,i:-9,p:4,r:15,pain:-8},oT:"Биология пульпы использована правильно",oD:"При жизнеспособной ткани биокерамический материал и герметизация создают условия для минерализованного моста.",oI:"Растёт шанс на долгосрочную витальность и репаративный дентин."},{t:"midA",k:"Промежуточно",l:"Покрытие Ca(OH)2 при сомнительной герметичности реставрации",n:"Материал может помочь, но микроподтекание сильно портит прогноз.",e:{m:3,i:2,p:0,r:4,pain:-3},oT:"Частично биологично",oD:"Кальций гидроксид способен индуцировать барьер, но без хорошего краевого прилегания результат нестабилен.",oI:"Краткосрочное улучшение возможно, долгосрочная надёжность ниже."},{t:"riskA",k:"Риск",l:"Девитализирующее или агрессивное химическое воздействие на живую пульпу",n:"Тактика разрушает ткань вместо сохранения её потенциала.",e:{m:6,i:15,p:-14,r:-20,pain:7},oT:"Химическая травма заменила биологию",oD:"Грубые девитализирующие подходы повышают риск некроза и осложнений и не соответствуют современному щадящему ведению жизнеспособной пульпы.",oI:"Резерв пульпы быстро истощается."}]},
+{short:"Пульпотомия или эндо",focus:4,title:"Продолжающееся кровотечение: сохранить глубокую пульпу или потерять витальность",desc:"Если поверхностная часть сильно воспалена, а глубокие отделы ещё живы, частичная пульпотомия может быть биологически оправдана. В центральном ядре лежат сосудистые стволы, венулы и C-волокна, поэтому исход всё больше зависит от перфузии и степени ишемии.",bio:["Частичная пульпотомия убирает наиболее воспалённую коронковую часть и сохраняет глубокую ткань.","При критическом падении перфузии даже хороший материал не компенсирует ишемию.","Эндодонтическое лечение устраняет боль и инфекцию механико-химически, но уже не сохраняет живую пульпу."],clin:["Быстрый гемостаз и отсутствие гнойного распада поддерживают витальную тактику.","Неконтролируемое кровотечение, самопроизвольная боль и признаки некроза сдвигают к эндодонтии.","Метод нужно выбирать по состоянию ткани, а не только по выраженности боли."],layer:"Фокус на центральном ядре: сосудистые и нервные элементы определяют, выдержит ли пульпа воспаление или перейдёт в ишемию и некроз.",cells:["Репарация всё больше зависит от одонтобластоподобных клеток.","Фибробласты определяют качество ремоделирования матрикса.","Макрофаги помогают очистке, но при затяжном процессе поддерживают деструкцию.","Если глубокая пульпа жива, прогениторы дают шанс на успех частичной пульпотомии."],mat:["Сохранённый матрикс нужен для сосудов и миграции клеток.","При его протеолитическом распаде качество заживления резко падает."],med:["C-волокна связаны с более тупой и длительной болью.","Гипоксия усиливает клеточный стресс.","Успешный гемостаз остаётся полезным клиническим маркёром."],ther:["Частичная пульпотомия с кальций-силикатным покрытием сегодня реальная витальная опция.","Эндодонтическое лечение оправдано, когда витальность уже нереалистично сохранить.","Анальгетики здесь только сопровождение основной тактики."],opts:[{t:"goodA",k:"Приоритет",l:"Частичная пульпотомия, гемостаз и покрытие кальций-силикатным цементом",n:"Удаляется наиболее воспалённый слой, глубокая ткань сохраняется.",e:{m:-8,i:-12,p:6,r:18,pain:-10},oT:"Воспалённая зона отсечена, жизнеспособная ткань сохранена",oD:"Это биологически оправданный вариант, если глубокая пульпа ещё способна к восстановлению и гемостаз достигается быстро.",oI:"Снижается давление, сохраняется глубокий регенеративный потенциал."},{t:"midA",k:"Промежуточно",l:"Сразу перейти к эндодонтическому лечению",n:"Метод решает боль и инфекцию, но лишает зуб живой пульпы.",e:{m:-16,i:-8,p:-20,r:-32,pain:-14},oT:"Проблема решена радикально",oD:"При необратимом процессе это может быть оправдано, но при сохранённой витальности это уже не регенеративная, а замещающая стратегия.",oI:"Симптомы уменьшаются, но шансы сохранить живую ткань исчезают."},{t:"riskA",k:"Риск",l:"Временная повязка без герметичности и отсрочка решения",n:"Микроподтекание и давление продолжают разрушать ткань.",e:{m:9,i:10,p:-12,r:-18,pain:8},oT:"Отсрочка усилила деструкцию",oD:"Если воспалённая пульпа остаётся в условиях бактериальной нагрузки, окно для витальной терапии быстро закрывается.",oI:"Растёт риск некроза и необратимого пульпита."}]}];
+let state={idx:0,s:{...init},hist:[]};
+const $=id=>document.getElementById(id);const dom={mV:$("mV"),iV:$("iV"),pV:$("pV"),rV:$("rV"),painV:$("painV"),mB:$("mB"),iB:$("iB"),pB:$("pB"),rB:$("rB"),painB:$("painB"),score:$("score"),scoreText:$("scoreText"),track:$("track"),num:$("num"),title:$("title"),desc:$("desc"),bio:$("bio"),clin:$("clin"),actions:$("actions"),outT:$("outT"),outD:$("outD"),outI:$("outI"),hist:$("hist"),layerText:$("layerText"),c1:$("c1"),c2:$("c2"),c3:$("c3"),c4:$("c4"),mat:$("mat"),med:$("med"),ther:$("ther"),reset:$("reset"),next:$("next")};
+function clamp(v){return Math.max(0,Math.min(100,v))}function score(){const x=state.s;return clamp(Math.round((100-(x.m*.32+x.i*.28+x.pain*.12)+(x.p*.24+x.r*.24))/1.16))}function scoreText(v){if(v>=78)return"Репарация опережает деструкцию.";if(v>=58)return"Витальность ещё можно уверенно защищать.";if(v>=38)return"Компенсация ограничена, нужен очень точный выбор.";return"Высокий риск необратимого процесса и потери витальности."}function metric(vEl,bEl,val){vEl.textContent=clamp(val)+"%";bEl.style.width=clamp(val)+"%"}function list(el,arr){el.innerHTML=arr.map(x=>`<li>${x}</li>`).join("")}function renderStats(){metric(dom.mV,dom.mB,state.s.m);metric(dom.iV,dom.iB,state.s.i);metric(dom.pV,dom.pB,state.s.p);metric(dom.rV,dom.rB,state.s.r);metric(dom.painV,dom.painB,state.s.pain);const sc=score();dom.score.textContent=sc+"%";dom.scoreText.textContent=scoreText(sc)}function render(){const s=stages[state.idx];dom.track.innerHTML=stages.map((x,i)=>`<div class="step ${i===state.idx?"active":""}">Этап ${i+1}. ${x.short}</div>`).join("");dom.num.textContent="Этап "+(state.idx+1);dom.title.textContent=s.title;dom.desc.textContent=s.desc;list(dom.bio,s.bio);list(dom.clin,s.clin);dom.layerText.textContent=s.layer;["L1","L2","L3","L4"].forEach((id,i)=>$(id).classList.toggle("active",i+1===s.focus));[dom.c1,dom.c2,dom.c3,dom.c4].forEach((el,i)=>el.textContent=s.cells[i]);list(dom.mat,s.mat);list(dom.med,s.med);list(dom.ther,s.ther);dom.actions.innerHTML=s.opts.map((o,i)=>`<button class="action ${o.t}" data-i="${i}"><span>${o.k}</span><strong>${o.l}</strong><small>${o.n}</small></button>`).join("");dom.next.textContent=state.idx===stages.length-1?"Вернуться к этапу 1":"Следующий этап";if(!state.hist.length)dom.hist.innerHTML='<div class="mini"><b>Пока без решений</b><div class="muted">История начнётся после первого выбора.</div></div>';else dom.hist.innerHTML=state.hist.map(h=>`<div class="mini"><b>${h.st}</b><div class="muted">${h.ch}</div><div>${h.sm}</div></div>`).join("")}function apply(idx){const s=stages[state.idx],o=s.opts[idx];Object.entries(o.e).forEach(([k,v])=>state.s[k]=clamp(state.s[k]+v));dom.outT.textContent=o.oT;dom.outD.textContent=o.oD;dom.outI.textContent=o.oI;state.hist.unshift({st:`Этап ${state.idx+1}: ${s.short}`,ch:o.l,sm:o.oI});state.hist=state.hist.slice(0,6);renderStats();if(state.idx<stages.length-1)state.idx++;else{const sc=score();dom.outT.textContent=sc>=60?"Финал: витальная тактика остаётся обоснованной":"Финал: витальность под угрозой";dom.outD.textContent=sc>=60?"После выбранных решений у пульпы ещё остаётся биологический резерв. При контроле герметичности и наблюдении сохранение ткани выглядит реалистичным.":"Накопленные микробы, давление и потеря перфузии сделали прогноз неблагоприятным. На этом уровне уже реалистично обсуждать эндодонтическое лечение как более надёжный путь.";dom.outI.textContent=scoreText(sc)}render()}function reset(){state={idx:0,s:{...init},hist:[]};dom.outT.textContent="Разбор решения";dom.outD.textContent="Сценарий сброшен. Снова пройдите путь от глубокого кариеса до выбора лечения и сравните, как меняются перфузия, давление и репаративный резерв.";dom.outI.textContent="";renderStats();render()}dom.actions.addEventListener("click",e=>{const b=e.target.closest(".action");if(b)apply(Number(b.dataset.i))});dom.reset.addEventListener("click",reset);dom.next.addEventListener("click",()=>state.idx===stages.length-1?reset():(state.idx++,render()));renderStats();render();
 </script>
 </body>
 </html>
