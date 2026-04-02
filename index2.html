@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Биохимия пульпы: Интерактив</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(145deg, #2c3e2f 0%, #1a2a1c 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .game-container {
+            max-width: 800px;
+            width: 100%;
+            background: #fef7e0;
+            border-radius: 48px;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.5);
+            padding: 20px;
+            border: 1px solid #d4b87a;
+        }
+        .status-bar {
+            background: #2c2b28;
+            border-radius: 20px;
+            padding: 15px;
+            color: white;
+            margin-bottom: 20px;
+        }
+        .progress-section {
+            margin-bottom: 12px;
+        }
+        .label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 5px;
+            gap: 10px;
+        }
+        .bar {
+            height: 20px;
+            background-color: #555;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .fill.bacteria { background-color: #9b2f2f; }
+        .fill.pressure { background-color: #e67e22; }
+        .fill.dentin { background-color: #e8c97a; box-shadow: inset 0 0 5px #aa8e40; }
+        .resources {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-weight: bold;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .tooth-area {
+            background: #e9dbaf;
+            border-radius: 80px 80px 40px 40px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            border: 3px solid #b97f44;
+        }
+        .pulp-core {
+            background: #ffccaa;
+            border-radius: 60px;
+            padding: 15px;
+            margin: 10px;
+            border: 1px dashed #b3470c;
+            font-weight: bold;
+        }
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 24px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.1s, filter 0.1s;
+            background: #f0f0f0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        button:active {
+            transform: scale(0.97);
+        }
+        button small {
+            display: block;
+            margin-top: 6px;
+            font-size: 12px;
+            font-weight: normal;
+            line-height: 1.3;
+        }
+        .btn-defense { background: #b8860b; color: white; border-bottom: 4px solid #6b4c1c; }
+        .btn-immune { background: #c0392b; color: white; border-bottom: 4px solid #8b2c1a; }
+        .btn-antioxid { background: #27ae60; color: white; border-bottom: 4px solid #1e8449; }
+        .btn-restore { background: #2980b9; color: white; border-bottom: 4px solid #1f618d; }
+        .reset-btn {
+            background: #2c3e50;
+            color: white;
+            width: 100%;
+            margin-top: 15px;
+        }
+        .message-area {
+            margin-top: 20px;
+            background: #fff0cc;
+            border-left: 6px solid #d97706;
+            padding: 10px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            line-height: 1.5;
+            color: #4a2e1a;
+        }
+        h2, h3 {
+            margin: 0 0 10px 0;
+            color: #4a2e1a;
+        }
+        .flex-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        @media (max-width: 700px) {
+            .actions {
+                grid-template-columns: 1fr;
+            }
+            .label {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="game-container" id="gameRoot">
+    <h2>🦷 Пульпарная оборона: Биохимия воспаления</h2>
+
+    <div class="status-bar">
+        <div class="progress-section">
+            <div class="label">
+                <span>🦠 Бактериальная инвазия (глубина кариеса)</span>
+                <span id="bacteriaPercent">0%</span>
+            </div>
+            <div class="bar">
+                <div class="fill bacteria" id="bacteriaBar"></div>
+            </div>
+        </div>
+
+        <div class="progress-section">
+            <div class="label">
+                <span>💢 Внутрипульпарное давление (IL-1, TNF-α)</span>
+                <span id="pressurePercent">0%</span>
+            </div>
+            <div class="bar">
+                <div class="fill pressure" id="pressureBar"></div>
+            </div>
+        </div>
+
+        <div class="progress-section">
+            <div class="label">
+                <span>🛡️ Репаративный дентин (барьер)</span>
+                <span id="dentinPercent">0%</span>
+            </div>
+            <div class="bar">
+                <div class="fill dentin" id="dentinBar"></div>
+            </div>
+        </div>
+
+        <div class="resources">
+            <span>⚡ АТФ: <span id="atfCount">100</span> ед.</span>
+            <span>🧪 Ca²⁺: <span id="calciumCount">80</span> ед.</span>
+            <span>🧬 Окислительный стресс: <span id="stressCount">10</span> ед.</span>
+        </div>
+    </div>
+
+    <div class="tooth-area">
+        <div style="font-size: 24px;">🦷 Эмаль / Дентин</div>
+        <div class="pulp-core">
+            🔴 ПУЛЬПА (Одонтобласты, нервы, сосуды)
+            <div style="font-size:12px; margin-top:5px;">⚠️ Баланс: воспаление vs регенерация</div>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button class="btn-defense" id="actionDentin">
+            🛡️ Секреция третичного дентина
+            <small>(+15% барьер, -5% бактерии, +3% давление, -15 АТФ, -20 Ca²⁺)</small>
+        </button>
+
+        <button class="btn-immune" id="actionImmune">
+            🔥 Провоспалительный ответ
+            <small>(-20% бактерий, +12% давление, -10 АТФ, +10 стресс)</small>
+        </button>
+
+        <button class="btn-antioxid" id="actionAntioxid">
+            🌿 Антиоксидантная защита
+            <small>(-15 стресс, +5 АТФ, -5% давление)</small>
+        </button>
+
+        <button class="btn-restore" id="actionRestore">
+            💊 Анальгезия + вазодилатация
+            <small>(-10% давление, -5 АТФ, +2% бактерии)</small>
+        </button>
+    </div>
+
+    <button class="reset-btn" id="resetGame">🔄 Рестарт (новый кариозный процесс)</button>
+
+    <div class="message-area" id="messageBox">
+        💡 Интерактив: иммунитет пульпы. Стройте дентин, контролируйте давление, избегайте некроза!
+    </div>
+</div>
+
+<script>
+    let gameState = {
+        bacteria: 20,
+        pressure: 15,
+        dentinBarrier: 10,
+        atp: 100,
+        calcium: 80,
+        oxidativeStress: 10,
+        gameOver: false
+    };
+
+    const DOM = {
+        bacteriaPercent: document.getElementById('bacteriaPercent'),
+        bacteriaBar: document.getElementById('bacteriaBar'),
+        pressurePercent: document.getElementById('pressurePercent'),
+        pressureBar: document.getElementById('pressureBar'),
+        dentinPercent: document.getElementById('dentinPercent'),
+        dentinBar: document.getElementById('dentinBar'),
+        atfCount: document.getElementById('atfCount'),
+        calciumCount: document.getElementById('calciumCount'),
+        stressCount: document.getElementById('stressCount'),
+        messageBox: document.getElementById('messageBox')
+    };
+
+    function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+    }
+
+    function updateUI() {
+        DOM.bacteriaPercent.innerText = clamp(gameState.bacteria, 0, 100) + '%';
+        DOM.bacteriaBar.style.width = clamp(gameState.bacteria, 0, 100) + '%';
+
+        DOM.pressurePercent.innerText = clamp(gameState.pressure, 0, 100) + '%';
+        DOM.pressureBar.style.width = clamp(gameState.pressure, 0, 100) + '%';
+
+        DOM.dentinPercent.innerText = clamp(gameState.dentinBarrier, 0, 100) + '%';
+        DOM.dentinBar.style.width = clamp(gameState.dentinBarrier, 0, 100) + '%';
+
+        DOM.atfCount.innerText = Math.floor(gameState.atp);
+        DOM.calciumCount.innerText = Math.floor(gameState.calcium);
+        DOM.stressCount.innerText = Math.floor(gameState.oxidativeStress);
+    }
+
+    function checkWinLose() {
+        if (gameState.gameOver) return true;
+
+        if (gameState.bacteria <= 5 && gameState.dentinBarrier >= 60) {
+            gameState.gameOver = true;
+            DOM.messageBox.innerHTML =
+                "🏆 <b>ПОБЕДА!</b><br>Вы успешно изолировали кариес третичным дентином. " +
+                "Пульпа сохранена. Биохимический успех: баланс цитокинов и минерализация матрикса!";
+            return true;
+        }
+
+        if (gameState.bacteria >= 100) {
+            gameState.gameOver = true;
+            DOM.messageBox.innerHTML =
+                "💀 <b>ПОРАЖЕНИЕ</b><br>Бактерии достигли критического уровня. " +
+                "Развился необратимый пульпит и некроз пульпы. Требуется эндодонтическое лечение.";
+            return true;
+        }
+
+        if (gameState.pressure >= 100) {
+            gameState.gameOver = true;
+            DOM.messageBox.innerHTML =
+                "⚠️ <b>НЕОБРАТИМЫЙ ПУЛЬПИТ</b><br>Внутрипульпарное давление стало критическим. " +
+                "Сдавление сосудов, ишемия, гибель одонтобластов. Зуб нежизнеспособен.";
+            return true;
+        }
+
+        if (gameState.oxidativeStress >= 80) {
+            gameState.gameOver = true;
+            DOM.messageBox.innerHTML =
+                "🧨 <b>ОКИСЛИТЕЛЬНЫЙ СТРЕСС</b><br>MMP разрушили внеклеточный матрикс. " +
+                "Пульпа лишена структурной поддержки. Некроз.";
+            return true;
+        }
+
+        if (gameState.atp <= 0) {
+            gameState.gameOver = true;
+            DOM.messageBox.innerHTML =
+                "🔋 <b>ЭНЕРГЕТИЧЕСКИЙ КОЛЛАПС</b><br>Истощены запасы АТФ. " +
+                "Невозможна работа ионных насосов и секреция коллагена. Гибель клеток пульпы.";
+            return true;
+        }
+
+        return false;
+    }
+
+    function addMessage(text, isError = false) {
+        if (!gameState.gameOver) {
+            DOM.messageBox.innerHTML = isError ? `⚠️ ${text}` : `✅ ${text}`;
+            setTimeout(() => {
+                if (!gameState.gameOver) {
+                    DOM.messageBox.innerHTML =
+                        "💡 Выберите действие: дентин, иммунитет или снижение стресса/давления.";
+                }
+            }, 2200);
+        }
+    }
+
+    function applyAction(effects) {
+        if (gameState.gameOver) {
+            addMessage("Игра окончена. Нажмите «Рестарт».", true);
+            return;
+        }
+
+        if (effects.dentin !== undefined) {
+            gameState.dentinBarrier += effects.dentin;
+        }
+        if (effects.bacteria !== undefined) {
+            gameState.bacteria += effects.bacteria;
+        }
+        if (effects.pressure !== undefined) {
+            gameState.pressure += effects.pressure;
+        }
+        if (effects.atp !== undefined) {
+            gameState.atp -= effects.atp;
+        }
+        if (effects.calcium !== undefined) {
+            gameState.calcium -= effects.calcium;
+        }
+        if (effects.stress !== undefined) {
+            gameState.oxidativeStress += effects.stress;
+        }
+        if (effects.reduceStress !== undefined) {
+            gameState.oxidativeStress -= effects.reduceStress;
+        }
+
+        if (gameState.oxidativeStress > 40 && !effects.skippedPassive) {
+            let extraPressure = Math.floor((gameState.oxidativeStress - 40) / 20);
+            if (extraPressure > 0) {
+                gameState.pressure += extraPressure;
+            }
+        }
+
+        if (gameState.dentinBarrier < 40) {
+            let passiveBacteria = Math.floor((40 - gameState.dentinBarrier) / 15) + 1;
+            gameState.bacteria += passiveBacteria;
+        }
+
+        if (effects.pressure === undefined || effects.pressure >= 0) {
+            if (Math.random() > 0.6 && gameState.pressure > 5) {
+                gameState.pressure -= 2;
+            }
+        }
+
+        gameState.bacteria = clamp(gameState.bacteria, 0, 100);
+        gameState.pressure = clamp(gameState.pressure, 0, 100);
+        gameState.dentinBarrier = clamp(gameState.dentinBarrier, 0, 100);
+        gameState.atp = clamp(gameState.atp, 0, 100);
+        gameState.calcium = clamp(gameState.calcium, 0, 100);
+        gameState.oxidativeStress = clamp(gameState.oxidativeStress, 0, 100);
+
+        updateUI();
+        checkWinLose();
+    }
+
+    document.getElementById('actionDentin').onclick = () => {
+        if (gameState.atp < 15 || gameState.calcium < 20) {
+            addMessage("Недостаточно АТФ или кальция для синтеза коллагена и минерализации.", true);
+            return;
+        }
+
+        applyAction({
+            dentin: 15,
+            bacteria: -5,
+            pressure: 3,
+            atp: 15,
+            calcium: 20,
+            stress: 5
+        });
+
+        if (!gameState.gameOver) {
+            addMessage("Одонтобласты секретируют дентинный матрикс. Барьер укреплён.");
+        }
+    };
+
+    document.getElementById('actionImmune').onclick = () => {
+        if (gameState.atp < 10) {
+            addMessage("Не хватает АТФ для выраженного иммунного ответа.", true);
+            return;
+        }
+
+        applyAction({
+            bacteria: -20,
+            pressure: 12,
+            atp: 10,
+            stress: 10
+        });
+
+        if (!gameState.gameOver) {
+            addMessage("Выброс IL-1β и TNF-α снижает число бактерий, но усиливает отёк.");
+        }
+    };
+
+    document.getElementById('actionAntioxid').onclick = () => {
+        applyAction({
+            reduceStress: 15,
+            atp: -5,
+            pressure: -5,
+            bacteria: 0
+        });
+
+        if (!gameState.gameOver) {
+            addMessage("Антиоксидантная защита уменьшает ROS, снижая стресс и давление.");
+        }
+    };
+
+    document.getElementById('actionRestore').onclick = () => {
+        if (gameState.atp < 5) {
+            addMessage("Недостаточно энергии для регуляции сосудистого тонуса.", true);
+            return;
+        }
+
+        applyAction({
+            pressure: -10,
+            atp: 5,
+            bacteria: 2
+        });
+
+        if (!gameState.gameOver) {
+            addMessage("Вазодилатация и анальгезия снижают давление, но бактерии слегка прогрессируют.");
+        }
+    };
+
+    document.getElementById('resetGame').onclick = () => {
+        gameState = {
+            bacteria: 20,
+            pressure: 15,
+            dentinBarrier: 10,
+            atp: 100,
+            calcium: 80,
+            oxidativeStress: 10,
+            gameOver: false
+        };
+
+        updateUI();
+        DOM.messageBox.innerHTML =
+            "🔄 Игра перезапущена. Защитите пульпу от кариеса, балансируя между воспалением и репарацией!";
+    };
+
+    updateUI();
+</script>
+</body>
+</html>
